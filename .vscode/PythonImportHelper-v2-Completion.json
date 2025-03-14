@@ -62,24 +62,6 @@
         "documentation": {}
     },
     {
-        "label": "hashlib",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "hashlib",
-        "description": "hashlib",
-        "detail": "hashlib",
-        "documentation": {}
-    },
-    {
-        "label": "plotly.express",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "plotly.express",
-        "description": "plotly.express",
-        "detail": "plotly.express",
-        "documentation": {}
-    },
-    {
         "label": "bin_dir",
         "kind": 5,
         "importPath": ".venv.Scripts.activate_this",
@@ -161,20 +143,11 @@
         "documentation": {}
     },
     {
-        "label": "hash_password",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def hash_password(password):\n    return hashlib.sha256(password.encode()).hexdigest()\n# Load expense data\ndef load_data():\n    return pd.read_csv(USER_DATA_FILE)\n# Save new expense\ndef save_expense(user_password, date, category, amount, description):\n    df = load_data()\n    new_data = pd.DataFrame([[hash_password(user_password), date, category, amount, description]],\n                            columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
         "label": "load_data",
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def load_data():\n    return pd.read_csv(USER_DATA_FILE)\n# Save new expense\ndef save_expense(user_password, date, category, amount, description):\n    df = load_data()\n    new_data = pd.DataFrame([[hash_password(user_password), date, category, amount, description]],\n                            columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])\n    df = pd.concat([df, new_data], ignore_index=True)\n    df[\"Date\"] = pd.to_datetime(df[\"Date\"])\n    df = df.sort_values(by=\"Date\", ascending=False)",
+        "peekOfCode": "def load_data():\n    return pd.read_csv(USER_DATA_FILE)\n# Save new expense (for specific user)\ndef save_expense(user_password, date, category, amount, description):\n    df = load_data()\n    # Add new entry\n    new_data = pd.DataFrame([[user_password, date, category, amount, description]], \n                            columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])\n    df = pd.concat([df, new_data], ignore_index=True)\n    # Sort by Date in Descending Order",
         "detail": "main",
         "documentation": {}
     },
@@ -183,7 +156,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def save_expense(user_password, date, category, amount, description):\n    df = load_data()\n    new_data = pd.DataFrame([[hash_password(user_password), date, category, amount, description]],\n                            columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])\n    df = pd.concat([df, new_data], ignore_index=True)\n    df[\"Date\"] = pd.to_datetime(df[\"Date\"])\n    df = df.sort_values(by=\"Date\", ascending=False)\n    df.to_csv(USER_DATA_FILE, index=False)\n# Delete an entry\ndef delete_entry(user_password, entry_index):",
+        "peekOfCode": "def save_expense(user_password, date, category, amount, description):\n    df = load_data()\n    # Add new entry\n    new_data = pd.DataFrame([[user_password, date, category, amount, description]], \n                            columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])\n    df = pd.concat([df, new_data], ignore_index=True)\n    # Sort by Date in Descending Order\n    df[\"Date\"] = pd.to_datetime(df[\"Date\"])\n    df = df.sort_values(by=\"Date\", ascending=False)\n    df.to_csv(USER_DATA_FILE, index=False)",
         "detail": "main",
         "documentation": {}
     },
@@ -192,7 +165,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def delete_entry(user_password, entry_index):\n    df = load_data()\n    user_df = df[df[\"User Password\"] == hash_password(user_password)]\n    if entry_index < len(user_df):\n        user_df = user_df.drop(user_df.index[entry_index])\n        df = df[df[\"User Password\"] != hash_password(user_password)]\n        df = pd.concat([df, user_df], ignore_index=True)\n        df.to_csv(USER_DATA_FILE, index=False)\n        return True\n    return False",
+        "peekOfCode": "def delete_entry(user_password, entry_index):\n    df = load_data()\n    # Filter only user-specific data\n    user_df = df[df[\"User Password\"] == user_password]\n    # Get row index to delete\n    if entry_index < len(user_df):\n        user_df = user_df.drop(user_df.index[entry_index])\n        # Update main dataframe\n        df = df[df[\"User Password\"] != user_password]  # Remove old user data\n        df = pd.concat([df, user_df], ignore_index=True)",
         "detail": "main",
         "documentation": {}
     },
@@ -201,7 +174,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "USER_DATA_FILE = \"user_data.csv\"\n# Ensure the file exists\nif not os.path.exists(USER_DATA_FILE):\n    df = pd.DataFrame(columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])\n    df.to_csv(USER_DATA_FILE, index=False)\n# Function to hash passwords\ndef hash_password(password):\n    return hashlib.sha256(password.encode()).hexdigest()\n# Load expense data\ndef load_data():",
+        "peekOfCode": "USER_DATA_FILE = \"user_data.csv\"\n# Ensure the file exists\nif not os.path.exists(USER_DATA_FILE):\n    df = pd.DataFrame(columns=[\"User Password\", \"Date\", \"Category\", \"Amount\", \"Description\"])\n    df.to_csv(USER_DATA_FILE, index=False)\n# Load expense data\ndef load_data():\n    return pd.read_csv(USER_DATA_FILE)\n# Save new expense (for specific user)\ndef save_expense(user_password, date, category, amount, description):",
         "detail": "main",
         "documentation": {}
     },
@@ -210,7 +183,7 @@
         "kind": 5,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "user_password = st.sidebar.text_input(\"Enter Your Unique Password:\", type=\"password\")\nif user_password:\n    st.sidebar.success(\"✅ Access Granted!\")\n    tab1, tab2, tab3 = st.tabs([\"➕ Add Expense\", \"📊 Analytics\", \"📜 View History\"])\n    with tab1:\n        st.header(\"➕ Add New Expense\")\n        col1, col2 = st.columns(2)\n        with col1:\n            date = st.date_input(\"📅 Date\")\n        with col2:",
+        "peekOfCode": "user_password = st.sidebar.text_input(\"Enter Your Unique Password:\", type=\"password\")\nif user_password:\n    st.sidebar.success(\"✅ Access Granted!\")\n    # Tabs for better navigation\n    tab1, tab2, tab3 = st.tabs([\"➕ Add Expense\", \"📜 View History\", \"📥 Download & Delete\"])\n    with tab1:\n        st.header(\"➕ Add New Expense\")\n        col1, col2 = st.columns(2)\n        with col1:\n            date = st.date_input(\"📅 Date\")",
         "detail": "main",
         "documentation": {}
     }

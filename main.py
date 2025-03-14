@@ -74,7 +74,6 @@ if user_password:
         if st.button("✔ Add Expense", use_container_width=True):
             save_expense(user_password, date, category, amount, description)
             st.success("✅ Expense added successfully!")
-            st.rerun()  # Refresh page to show updated data
 
     with tab2:
         st.header("📜 Your Expense History (Newest First)")
@@ -97,9 +96,8 @@ if user_password:
             if st.button("🗑 Delete Entry", use_container_width=True):
                 if delete_entry(user_password, entry_index):
                     st.success("✅ Entry Deleted Successfully!")
-                    st.rerun()  # Refresh page to show updated data
                 else:
                     st.error("❌ Invalid Entry Number!")
 
 else:
-    st.sidebar.error("❌ Firstly, Enter Your Unique Password to unlock or create your data.")
+    st.sidebar.error("❌ Please Enter Your Password to Access Your Data.")
